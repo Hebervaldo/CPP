@@ -1,0 +1,7 @@
+NETWORK DATA - Epoca 1000001 - Neuronios 100- Iteracoes 1000000 - Erro 1.64804e-005 - Tempo Execucao 27 [s].
+
+Pat:	Entrada 1	Entrada 2	Alvo 1	Saida 1	
+1	0	0	0	0.00257441	
+2	0	1	1	0.997083	
+3	1	0	1	0.997183	
+4	1	1	0	0.00314514	
