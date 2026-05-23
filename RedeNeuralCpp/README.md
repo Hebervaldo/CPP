@@ -1,25 +1,29 @@
-# Rede Neural em C++
+# Biblioteca Matemática MMQDNDL para HP 50g
 
-Projeto desenvolvido em C++ para implementação experimental de redes neurais artificiais utilizando algoritmos próprios voltados para aprendizado computacional, processamento matemático e experimentação em inteligência artificial.
+Projeto desenvolvido em RPL para calculadoras HP 50g, voltado para implementação de algoritmos matemáticos avançados, processamento numérico e experimentação científica utilizando programação nativa da plataforma HP.
 
-A solução foi criada com foco em desenvolvimento independente de algoritmos neurais, permitindo controle detalhado das estruturas de memória, manipulação matemática de redes neurais e simulação computacional de aprendizado sem utilização de frameworks externos de machine learning.
+A solução implementa rotinas matemáticas próprias para cálculos científicos e processamento numérico, permitindo execução de algoritmos avançados diretamente na calculadora.
 
-O sistema possui arquitetura orientada a objetos e processamento otimizado para experimentação algorítmica, manipulação matricial e testes de modelos neurais utilizando recursos nativos da linguagem C++.
+Pela análise do projeto, foram identificadas implementações relacionadas a:
+
+- rotinas matemáticas avançadas.
+
+O projeto possui foco em desempenho matemático, otimização algorítmica e experimentação científica em ambiente RPL.
 
 ---
 
 ## ✨ Principais Recursos
 
-- Implementação própria de rede neural
-- Desenvolvimento em C++
-- Estrutura orientada a objetos
-- Processamento matemático
-- Manipulação de matrizes e vetores
-- Estruturas neurais customizadas
-- Controle manual e otimizado de memória
-- Simulação de aprendizado neural
-- Processamento de datasets
-- Experimentação computacional
+- Desenvolvimento em RPL para HP 50g
+- Implementação de algoritmos matemáticos
+- Processamento numérico
+- Métodos científicos
+- Manipulação simbólica e numérica
+- Estruturas matemáticas customizadas
+- Cálculos científicos avançados
+- Experimentação matemática
+- Biblioteca modular reutilizável
+- Otimização algorítmica
 
 ---
 
@@ -27,113 +31,48 @@ O sistema possui arquitetura orientada a objetos e processamento otimizado para 
 
 O sistema permite:
 
-- criação de redes neurais artificiais;
-- processamento de sinais neurais;
-- manipulação de pesos sinápticos;
-- treinamento experimental de modelos;
-- operações matriciais;
-- leitura de datasets;
-- simulação computacional de aprendizado;
-- análise de comportamento neural;
-- testes algorítmicos de inteligência artificial.
+- execução de funções matemáticas;
+- cálculos numéricos avançados;
+- processamento científico;
+- manipulação de polinômios;
+- interpolação matemática;
+- aproximações numéricas;
+- processamento trigonométrico;
+- experimentação computacional em RPL.
 
 ---
 
-## 🏗️ Arquitetura do Projeto
+## 🏗️ Estrutura do Projeto
 
-O projeto foi estruturado para permitir desenvolvimento e experimentação de algoritmos neurais utilizando recursos nativos da linguagem C++.
+### Arquivos identificados
 
-### Componentes Principais
+- `Makefile.win`
+- `clsMMQ.cpp`
+- `clsMMQ.h`
+- `clsMMQ.o`
+- `mnMMQDNDL.cpp`
+- `mnMMQDNDL.o`
+- `prjMMQDNDL.dev`
+- `prjMMQDNDL.exe`
+- `prjMMQDNDL.layout`
+- `prjMMQDNDL_private.h`
+- `prjMMQDNDL_private.rc`
 
-| Componente | Função |
-|---|---|
-| `main.cpp` | Inicialização da aplicação |
-| `RedeNeural.cpp` | Núcleo da rede neural |
-| `Neuronio.cpp` | Estrutura dos neurônios |
-| `Camada.cpp` | Gerenciamento de camadas |
-| `Matriz.cpp` | Operações matriciais |
-| `Treinamento.cpp` | Rotinas de treinamento |
-| `dataset.dat` | Dados de treinamento |
+### Arquivos RPL identificados
+
+- Nenhum arquivo RPL identificado
 
 ---
 
 ## 🔧 Tecnologias Utilizadas
 
-- C++
-- Programação Orientada a Objetos
-- Inteligência Artificial
-- Redes Neurais Artificiais
+- HP 50g
+- RPL
 - Processamento Matemático
-- Estruturas Matriciais
-- Manipulação de Memória
-- Simulação Computacional
-
----
-
-## 🧠 Estrutura Neural
-
-A aplicação possui implementação própria de componentes neurais, incluindo:
-
-- neurônios artificiais;
-- camadas neurais;
-- propagação de sinais;
-- manipulação de pesos;
-- treinamento supervisionado;
-- operações matriciais;
-- processamento matemático;
-- leitura de datasets.
-
----
-
-## 📂 Estrutura Geral
-
-### Extensões identificadas
-
-- `.bat`: 1 arquivo(s)
-- `.cbp`: 1 arquivo(s)
-- `.cpp`: 3 arquivo(s)
-- `.dat`: 11 arquivo(s)
-- `.dev`: 1 arquivo(s)
-- `.exe`: 1 arquivo(s)
-- `.h`: 2 arquivo(s)
-- `.layout`: 1 arquivo(s)
-- `.o`: 4 arquivo(s)
-- `.win`: 1 arquivo(s)
-
-### Arquivos encontrados
-
-- `Makefile.win`
-- `Rede_Neural.bat`
-- `Rede_Neural.cbp`
-- `Rede_Neural.dev`
-- `Rede_Neural.exe`
-- `Rede_Neural.layout`
-- `clsArquivoTexto.cpp`
-- `clsArquivoTexto.h`
-- `clsArquivoTexto.o`
-- `clsRedeNeural.cpp`
-- `clsRedeNeural.h`
-- `clsRedeNeural.o`
-- `entradasteste.dat`
-- `entradastreinamento.dat`
-- `erro_ExecucaoRedeNeural.dat`
-- `erro_TreinamentoRedeNeural.dat`
-- `errotreinamento.dat`
-- `mnRedeNeural.cpp`
-- `mnRedeNeural.o`
-- `mnRede_Neural.o`
-- `numerocolunasalvos.dat`
-- `numeroneuronios.dat`
-- `pesos.dat`
-- `resultadosteste.dat`
-- `resultadostreinamento.dat`
-- `target.dat`
-
-### Arquivos C++ identificados
-
-- `clsArquivoTexto.cpp`
-- `clsRedeNeural.cpp`
-- `mnRedeNeural.cpp`
+- Métodos Numéricos
+- Cálculos Científicos
+- Manipulação Simbólica
+- Algoritmos Matemáticos
 
 ---
 
@@ -141,30 +80,28 @@ A aplicação possui implementação própria de componentes neurais, incluindo:
 
 O projeto foi desenvolvido para:
 
-- estudo de inteligência artificial;
-- desenvolvimento independente de redes neurais;
-- aprendizado de algoritmos matemáticos;
-- experimentação computacional;
-- testes de modelos neurais;
-- pesquisa em processamento neural;
-- simulação de aprendizado computacional.
+- estudo de algoritmos matemáticos;
+- implementação de métodos numéricos;
+- experimentação científica;
+- desenvolvimento de bibliotecas matemáticas;
+- otimização de cálculos em RPL;
+- processamento matemático avançado em HP 50g.
 
 ---
 
 ## 🚀 Melhorias Futuras
 
-- Implementação avançada de backpropagation
-- Suporte a múltiplas arquiteturas neurais
-- Persistência de modelos treinados
-- Exportação de redes neurais
-- Processamento paralelo
-- Integração com datasets externos
-- Visualização gráfica do aprendizado
-- Suporte a GPU
-- Interface visual de treinamento
+- Expansão das bibliotecas matemáticas
+- Otimização de desempenho
+- Interface gráfica para seleção das rotinas
+- Visualização gráfica de funções
+- Benchmark matemático
+- Integração entre módulos científicos
+- Exportação de resultados
+- Ampliação das rotinas simbólicas
 
 ---
 
 ## 📄 Licença
 
-Projeto desenvolvido para estudos, experimentação em inteligência artificial e implementação de redes neurais utilizando C++.
+Projeto desenvolvido para estudos, experimentação matemática e implementação de algoritmos científicos em RPL para HP 50g.
