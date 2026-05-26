@@ -13,8 +13,8 @@
 #include "NOKIA_5110_RPI.hpp" // PCD8544 controller driver
 
 // **************** GLOBALS ***************
-#define RST_LCD 25
-#define DC_LCD 24
+#define RST_LCD 25 // RST
+#define DC_LCD 24 // DC
 
 #define inverse  false // set to true to invert display pixel color
 #define contrast 0xBF // default is 0xBF set in LCDinit, Try 0xB1 <-> 0xBF if your display is too dark/dim

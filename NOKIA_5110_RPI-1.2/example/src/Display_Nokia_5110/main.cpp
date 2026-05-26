@@ -11,18 +11,16 @@
 #include <bcm2835.h> // for SPI, GPIO and delays. airspayce.com/mikem/bcm2835/index.html
 #include <cmath>
 #include <ctime>
-#include "getipv4.hpp"
 #include <iostream> // for std::cout
-#include <limits.h>
 #include "NOKIA_5110_RPI.hpp" // PCD8544 controller driver
 #include <signal.h>
 
 // **************** GPIO ***************
-#define RST_LCD 25 // 26 // 25 // RST
-#define DC_LCD 24 // 19 // 24 // DC
-#define SCLK_LCD 11 // 21 // 11 // 22 // Clk 
-#define SDIN_LCD 10 // 20 // 10 // 27 // Din
-#define CS_LCD 8 // 16 // 8 // CE
+#define RST_LCD 25
+#define DC_LCD 24
+#define SCLK_LCD 11 // 22
+#define SDIN_LCD 10 // 27
+#define CS_LCD 8
 
 #define inverse  false // set to true to invert display pixel color
 #define contrast 0xBF // default is 0xBF set in LCDinit, Try 0xB1 <-> 0xBF if your display is too dark/dim
@@ -32,6 +30,8 @@
 #define NUMERO_COLUNAS_DISPLAY_LINHA 12
 #define TAMANHO_STRING_CHAR	200
 
+char bspd[TAMANHO_STRING_CHAR];
+
 int contador = 0;
 
 NOKIA_5110_RPI myLCD(RST_LCD, DC_LCD, CS_LCD, SDIN_LCD, SCLK_LCD);
@@ -40,14 +40,13 @@ void mtdConfigurarDisplayNokia5110(void);
 void mtdFinalizarDisplayNokia5110(void);
 void mtdFinalizacao(int NSinal);
 int mtdObterComprimentoVetorChar(char *VetorChar);
-void mtdObterVetorCharTextoAlinhadoEstatico(char *Texto, int NumeroCaracteresLinha, char Alinhamento, char *Retorno);
-void mtdObterVetorCharTextoAlinhadoDinamico(char *Texto, int NumeroCaracteresLinha, char Direcao, int Passo, char *Retorno);
-void mtdObterVetorCharTexto(char *Texto, int NumeroCaracteresLinha, char Alinhamento, char Direcao, int Passo, char *Retorno);
+char *mtdObterVetorCharTextoAlinhadoEstatico(char *Texto, int NumeroCaracteresLinha, char Alinhamento);
+char *mtdObterVetorCharTextoAlinhadoDinamico(char *Texto, int NumeroCaracteresLinha, char Direcao, int Passo);
+char *mtdObterVetorCharTexto(char *Texto, int NumeroCaracteresLinha, char Alinhamento, char Direcao, int Passo);
 void mtdGerarDelay(float Intervalo);
 void mtdImprimirSaidaLCDNokia5110(char *Texto, char Alinhamento, char Direcao, int Repeticoes, double Intervalo);
 void mtdImprimirSaidaLCDNokia5110(char *Linha01, char *Linha02, char *Linha03, char *Linha04, char *Linha05, char Alinhamento, char Direcao, int Repeticoes, double Intervalo);
 void mtdImprimirTempoLCDNokia5110(int Repeticoes, double Intervalo);
-void mtdImprimirNomeIPHWNetmaskBroadcastInterfaceLCDNokia5110(int Repeticoes, double Intervalo);
 
 int main(int argc, char** argv)
 {
@@ -65,43 +64,35 @@ int main(int argc, char** argv)
 	{
 		signal(SIGINT, mtdFinalizacao);
 
+		std::cout << "Error 1201 : Problem with init bcm2835 library\r\n";
+	
 		mtdConfigurarDisplayNokia5110();
-
-		if(argv[1][0] == '-')
+                                                                   
+		switch(argc)
 		{
-			switch(argc)
-			{
-				case 1:
-					Mensagem = "Digite algum parametro ao chamar o aplicativo.";
-					chrAlinhamento = 'd';
-					chrDirecao ='a';
-					intRepeticoes = -1;
-					dblIntervalo = 1;
+			case 1:
+				Mensagem = "Digite algum parametro ao chamar o aplicativo.";
+				chrAlinhamento = 'd';
+				chrDirecao ='a';
+				intRepeticoes = -1;
+				dblIntervalo = 1;
 
-					mtdImprimirSaidaLCDNokia5110
-					(
-						Mensagem,
-						chrAlinhamento,
-						chrDirecao,
-						intRepeticoes,
-						dblIntervalo
-					);
+				mtdImprimirSaidaLCDNokia5110
+				(
+					Mensagem,
+					chrAlinhamento,
+					chrDirecao,
+					intRepeticoes,
+					dblIntervalo
+				);
 
-				break;
-				case 2:
-					switch(argv[1][1])
-					{
-						case 'r':
-							intRepeticoes = -1;
-							dblIntervalo = 1;
-							
-							mtdImprimirNomeIPHWNetmaskBroadcastInterfaceLCDNokia5110
-							(
-								intRepeticoes,
-								dblIntervalo
-							);
-						break;
-						case 't':
+			break;
+			case 2:
+				switch(argv[1][1])
+				{
+					case 'r':
+						if(argv[1][0] == '-')
+						{		
 							intRepeticoes = -1;
 							dblIntervalo = .1;
 							
@@ -110,41 +101,34 @@ int main(int argc, char** argv)
 								intRepeticoes,
 								dblIntervalo
 							);
-						break;
-						default:
-							Mensagem = argv[1];
-							chrAlinhamento = 'c';
-							chrDirecao ='a';
-							intRepeticoes = -1;
-							dblIntervalo = 1;
-							
-							mtdImprimirSaidaLCDNokia5110
-							(
-								Mensagem,
-								chrAlinhamento,
-								chrDirecao,
-								intRepeticoes,
-								dblIntervalo
-							);
+						}
+					break;
+					default:
+						Mensagem = argv[1];
+						chrAlinhamento = 'c';
+						chrDirecao ='a';
+						intRepeticoes = -1;
+						dblIntervalo = 1;
+						
+						mtdImprimirSaidaLCDNokia5110
+						(
+							Mensagem,
+							chrAlinhamento,
+							chrDirecao,
+							intRepeticoes,
+							dblIntervalo
+						);
 
-						break;
-					}
+					break;
+				}
 
-				break;
-				case 3:
-					switch(argv[1][1])
-					{
-						case 'r':
-							intRepeticoes = atoi(argv[2]);
-							dblIntervalo = 1;
-							
-							mtdImprimirNomeIPHWNetmaskBroadcastInterfaceLCDNokia5110
-							(
-								intRepeticoes,
-								dblIntervalo
-							);
-						break;
-						case 't':
+			break;
+			case 3:
+				switch(argv[1][1])
+				{
+					case 'r':
+						if(argv[1][0] == '-')
+						{		
 							intRepeticoes = atoi(argv[2]);
 							dblIntervalo = .1;
 							
@@ -153,41 +137,34 @@ int main(int argc, char** argv)
 								intRepeticoes,
 								dblIntervalo
 							);
-						break;
-						default:
-							Mensagem = argv[1];
-							chrAlinhamento = argv[2][0];
-							chrDirecao ='a';
-							intRepeticoes = -1;
-							dblIntervalo = 1;
-							
-							mtdImprimirSaidaLCDNokia5110
-							(
-								Mensagem,
-								chrAlinhamento,
-								chrDirecao,
-								intRepeticoes,
-								dblIntervalo
-							);
+						}
+					break;
+					default:
+						Mensagem = argv[1];
+						chrAlinhamento = argv[2][0];
+						chrDirecao ='a';
+						intRepeticoes = -1;
+						dblIntervalo = 1;
+						
+						mtdImprimirSaidaLCDNokia5110
+						(
+							Mensagem,
+							chrAlinhamento,
+							chrDirecao,
+							intRepeticoes,
+							dblIntervalo
+						);
 
-						break;
-					}
-					
-				break;
-				case 4:
-					switch(argv[1][1])
-					{
-						case 'r':
-							intRepeticoes = atoi(argv[2]);
-							dblIntervalo = atof(argv[3]);
-							
-							mtdImprimirNomeIPHWNetmaskBroadcastInterfaceLCDNokia5110
-							(
-								intRepeticoes,
-								dblIntervalo
-							);
-						break;
-						case 't':
+					break;
+				}
+				
+			break;
+			case 4:
+				switch(argv[1][1])
+				{
+					case 'r':
+						if(argv[1][0] == '-')
+						{		
 							intRepeticoes = atoi(argv[2]);
 							dblIntervalo = atof(argv[3]);
 							
@@ -196,72 +173,75 @@ int main(int argc, char** argv)
 								intRepeticoes,
 								dblIntervalo
 							);
-						break;
-						default:
-							Mensagem = argv[1];
-							chrAlinhamento = argv[2][0];
-							chrDirecao = argv[3][0];
-							intRepeticoes = -1;
-							dblIntervalo = 1;
-							
-							mtdImprimirSaidaLCDNokia5110
-							(
-								Mensagem,
-								chrAlinhamento,
-								chrDirecao,
-								intRepeticoes,
-								dblIntervalo
-							);
-						break;
-					}
-					
-				break;
-				case 5:
-					Mensagem = argv[1];
-					chrAlinhamento = argv[2][0];
-					chrDirecao = argv[3][0];
-					intRepeticoes = atoi(argv[4]);
-					dblIntervalo = 1;
-					
-					mtdImprimirSaidaLCDNokia5110
-					(
-						Mensagem,
-						chrAlinhamento,
-						chrDirecao,
-						intRepeticoes,
-						dblIntervalo
-					);
+						}
+					break;
+					default:
+						Mensagem = argv[1];
+						chrAlinhamento = argv[2][0];
+						chrDirecao = argv[3][0];
+						intRepeticoes = -1;
+						dblIntervalo = 1;
+						
+						mtdImprimirSaidaLCDNokia5110
+						(
+							Mensagem,
+							chrAlinhamento,
+							chrDirecao,
+							intRepeticoes,
+							dblIntervalo
+						);
+					break;
+				}
+				
+			break;
+			case 5:
+				Mensagem = argv[1];
+				chrAlinhamento = argv[2][0];
+				chrDirecao = argv[3][0];
+				intRepeticoes = atoi(argv[4]);
+				dblIntervalo = 1;
+				
+				mtdImprimirSaidaLCDNokia5110
+				(
+					Mensagem,
+					chrAlinhamento,
+					chrDirecao,
+					intRepeticoes,
+					dblIntervalo
+				);
 
-				break;
-				case 6:
-					Mensagem = argv[1];
-					Linha02 = " ";
-					Linha03 = " ";
-					Linha04 = " ";
-					Linha05 = " ";
-					chrAlinhamento = argv[2][0];
-					chrDirecao = argv[3][0];
-					intRepeticoes = atoi(argv[4]);
-					dblIntervalo = atof(argv[5]);
-					
-					mtdImprimirSaidaLCDNokia5110
-					(
-						Mensagem,
-						Linha02,
-						Linha03,
-						Linha04,
-						Linha05,
-						chrAlinhamento,
-						chrDirecao,
-						intRepeticoes,
-						dblIntervalo
-					);
+			break;
+			case 6:
+				Mensagem = argv[1];
+				Linha02 = " ";
+				Linha03 = " ";
+				Linha04 = " ";
+				Linha05 = " ";
+				chrAlinhamento = argv[2][0];
+				chrDirecao = argv[3][0];
+				intRepeticoes = atoi(argv[4]);
+				dblIntervalo = atof(argv[5]);
+				
+				mtdImprimirSaidaLCDNokia5110
+				(
+					Mensagem,
+					Linha02,
+					Linha03,
+					Linha04,
+					Linha05,
+					chrAlinhamento,
+					chrDirecao,
+					intRepeticoes,
+					dblIntervalo
+				);
 
-				break;
-				case 7:
-						switch(argv[1][1])
-						{
-							case 'm':
+			break;
+			case 7:
+					switch(argv[1][1])
+					{
+						case 't':
+							if(argv[1][0] == '-')
+							{
 								Mensagem = argv[2];
 								chrAlinhamento = argv[3][0];
 								chrDirecao = argv[4][0];
@@ -276,120 +256,116 @@ int main(int argc, char** argv)
 									intRepeticoes,
 									dblIntervalo
 								);
+							}
+						
+						break;
+
+						default:
+							Mensagem = argv[1];
+							Linha02 = argv[2];
+							Linha03 = " ";
+							Linha04 = " ";
+							Linha05 = " ";
+							chrAlinhamento = argv[3][0];
+							chrDirecao = argv[4][0];
+							intRepeticoes = atoi(argv[5]);
+							dblIntervalo = atof(argv[6]);
 							
-							break;
+							mtdImprimirSaidaLCDNokia5110
+							(
+								Mensagem,
+								Linha02,
+								Linha03,
+								Linha04,
+								Linha05,
+								chrAlinhamento,
+								chrDirecao,
+								intRepeticoes,
+								dblIntervalo
+							);
 
-							default:
-								Mensagem = argv[1];
-								Linha02 = argv[2];
-								Linha03 = " ";
-								Linha04 = " ";
-								Linha05 = " ";
-								chrAlinhamento = argv[3][0];
-								chrDirecao = argv[4][0];
-								intRepeticoes = atoi(argv[5]);
-								dblIntervalo = atof(argv[6]);
-								
-								mtdImprimirSaidaLCDNokia5110
-								(
-									Mensagem,
-									Linha02,
-									Linha03,
-									Linha04,
-									Linha05,
-									chrAlinhamento,
-									chrDirecao,
-									intRepeticoes,
-									dblIntervalo
-								);
+						break;
+					}
 
-							break;
-						}
+			break;
+			case 8:
+				Mensagem = argv[1];
+				Linha02 = argv[2];
+				Linha03 = argv[3];
+				Linha04 = " ";
+				Linha05 = " ";
+				chrAlinhamento = argv[4][0];
+				chrDirecao = argv[5][0];
+				intRepeticoes = atoi(argv[6]);
+				dblIntervalo = atof(argv[7]);
 
-				break;
-				case 8:
-					Mensagem = argv[1];
-					Linha02 = argv[2];
-					Linha03 = argv[3];
-					Linha04 = " ";
-					Linha05 = " ";
-					chrAlinhamento = argv[4][0];
-					chrDirecao = argv[5][0];
-					intRepeticoes = atoi(argv[6]);
-					dblIntervalo = atof(argv[7]);
+				mtdImprimirSaidaLCDNokia5110
+				(
+					Mensagem,
+					Linha02,
+					Linha03,
+					Linha04,
+					Linha05,
+					chrAlinhamento,
+					chrDirecao,
+					intRepeticoes,
+					dblIntervalo
+				);
 
-					mtdImprimirSaidaLCDNokia5110
-					(
-						Mensagem,
-						Linha02,
-						Linha03,
-						Linha04,
-						Linha05,
-						chrAlinhamento,
-						chrDirecao,
-						intRepeticoes,
-						dblIntervalo
-					);
+			break;
+			case 9:
+				Mensagem = argv[1];
+				Linha02 = argv[2];
+				Linha03 = argv[3];
+				Linha04 = argv[4];
+				Linha05 = " ";
+				chrAlinhamento = argv[5][0];
+				chrDirecao = argv[6][0];
+				intRepeticoes = atoi(argv[7]);
+				dblIntervalo = atof(argv[8]);
 
-				break;
-				case 9:
-					Mensagem = argv[1];
-					Linha02 = argv[2];
-					Linha03 = argv[3];
-					Linha04 = argv[4];
-					Linha05 = " ";
-					chrAlinhamento = argv[5][0];
-					chrDirecao = argv[6][0];
-					intRepeticoes = atoi(argv[7]);
-					dblIntervalo = atof(argv[8]);
+				mtdImprimirSaidaLCDNokia5110
+				(
+					Mensagem,
+					Linha02,
+					Linha03,
+					Linha04,
+					Linha05,
+					chrAlinhamento,
+					chrDirecao,
+					intRepeticoes,
+					dblIntervalo
+				);
 
-					mtdImprimirSaidaLCDNokia5110
-					(
-						Mensagem,
-						Linha02,
-						Linha03,
-						Linha04,
-						Linha05,
-						chrAlinhamento,
-						chrDirecao,
-						intRepeticoes,
-						dblIntervalo
-					);
+			break;
+			case 10:
+				Mensagem = argv[1];
+				Linha02 = argv[2];
+				Linha03 = argv[3];
+				Linha04 = argv[4];
+				Linha05 = argv[5];
+				chrAlinhamento = argv[6][0];
+				chrDirecao = argv[7][0];
+				intRepeticoes = atoi(argv[8]);
+				dblIntervalo = atof(argv[9]);
 
-				break;
-				case 10:
-					Mensagem = argv[1];
-					Linha02 = argv[2];
-					Linha03 = argv[3];
-					Linha04 = argv[4];
-					Linha05 = argv[5];
-					chrAlinhamento = argv[6][0];
-					chrDirecao = argv[7][0];
-					intRepeticoes = atoi(argv[8]);
-					dblIntervalo = atof(argv[9]);
+				mtdImprimirSaidaLCDNokia5110
+				(
+					Mensagem,
+					Linha02,
+					Linha03,
+					Linha04,
+					Linha05,
+					chrAlinhamento,
+					chrDirecao,
+					intRepeticoes,
+					dblIntervalo
+				);
 
-					mtdImprimirSaidaLCDNokia5110
-					(
-						Mensagem,
-						Linha02,
-						Linha03,
-						Linha04,
-						Linha05,
-						chrAlinhamento,
-						chrDirecao,
-						intRepeticoes,
-						dblIntervalo
-					);
-
-				break;
-			}
-	}
+			break;
+		}
 
 		mtdFinalizarDisplayNokia5110();
-	}
-	else
-	{
-		std::cout << "Error 1201 : Problem with init bcm2835 library\r\n";
 	}
 	
 	return 0;
@@ -430,24 +406,23 @@ int mtdObterComprimentoVetorChar(char *VetorCaractere)
 	return Retorno;
 }
 
-void mtdObterVetorCharTextoAlinhadoEstatico(char *Texto, int NumeroCaracteresLinha, char Alinhamento, char *Retorno)
+char *mtdObterVetorCharTextoAlinhadoEstatico(char *Texto, int NumeroCaracteresLinha, char Alinhamento) 
 {
+	char *Retorno;
+
 	int intNumeroCaracteresTexto = 0;
 	intNumeroCaracteresTexto = mtdObterComprimentoVetorChar(Texto);
 
 	int intNumeroEspaco = 0;
 
-	char bspei[TAMANHO_STRING_CHAR];
-	char bspef[TAMANHO_STRING_CHAR];
+	char bspe[TAMANHO_STRING_CHAR];
 
 	for(int i = 0; i < TAMANHO_STRING_CHAR; i++)
 	{
-		Retorno[i] = '\0';
-		bspei[i] = '\0';
-		bspef[i] = '\0';
+		bspe[i] = (i <= NumeroCaracteresLinha ? ' ' : '\0');
 	}
 
-	int intContador = 0;
+	int intContador = -1;
 
 	if(intNumeroCaracteresTexto < NumeroCaracteresLinha)
 	{
@@ -458,11 +433,11 @@ void mtdObterVetorCharTextoAlinhadoEstatico(char *Texto, int NumeroCaracteresLin
 
 			break;
 			case 99: // 'c'
-				intNumeroEspaco = round((NumeroCaracteresLinha - intNumeroCaracteresTexto) / 2);
+				intNumeroEspaco = round((NumeroCaracteresLinha - mtdObterComprimentoVetorChar(Texto)) / 2);
 
 			break;
 			case 100: // 'd'
-				intNumeroEspaco = round(NumeroCaracteresLinha - intNumeroCaracteresTexto);
+				intNumeroEspaco = round(NumeroCaracteresLinha - mtdObterComprimentoVetorChar(Texto));
 
 			break;
 			default:
@@ -471,35 +446,29 @@ void mtdObterVetorCharTextoAlinhadoEstatico(char *Texto, int NumeroCaracteresLin
 			break;
 		}
 
-		for(int i = 0; i < intNumeroEspaco; i++)
+		while(intContador <= intNumeroEspaco)
 		{
-			bspei[i] = ' ';
-		}
-
-		for(int i = 0; i < NumeroCaracteresLinha - (intNumeroCaracteresTexto + intNumeroEspaco); i++)
-		{
-			bspef[i] = ' ';
+			bspe[intContador] = (intContador++ < intNumeroEspaco ? ' ' : '\0');
 		}
 	}
 
-	snprintf(Retorno, TAMANHO_STRING_CHAR, "%s%s%s", bspei, Texto, bspef);
+	snprintf(bspd, TAMANHO_STRING_CHAR, "%s%s", bspe, Texto);
+
+	Retorno = bspd;
+
+	return Retorno;
 }
 
-void mtdObterVetorCharTextoAlinhadoDinamico(char *Texto, int NumeroCaracteresLinha, char Direcao, int Passo, char *Retorno) 
+char *mtdObterVetorCharTextoAlinhadoDinamico(char *Texto, int NumeroCaracteresLinha, char Direcao, int Passo) 
 {
+	char *Retorno;
+
 	int intNumeroCaracteresTexto = 0;
 	intNumeroCaracteresTexto = mtdObterComprimentoVetorChar(Texto);
 
 	int intContador = 0;
 	int intIncremento = -1;
 	int intPasso = (Passo % intNumeroCaracteresTexto);
-
-
-
-	for(int i = 0; i < TAMANHO_STRING_CHAR; i++)
-	{
-		Retorno[i] = (i <= NumeroCaracteresLinha ? ' ' : '\0');
-	}
 
 	switch(Direcao)
 	{
@@ -515,7 +484,7 @@ void mtdObterVetorCharTextoAlinhadoDinamico(char *Texto, int NumeroCaracteresLin
 					intContador = intIncremento++;
 				}
 
-				Retorno[i] = Texto[intContador];
+				bspd[i] = Texto[intContador];
 			}
 
 		break;
@@ -531,7 +500,7 @@ void mtdObterVetorCharTextoAlinhadoDinamico(char *Texto, int NumeroCaracteresLin
 					intContador = intIncremento + (i - intPasso);
 				}
 
-				Retorno[i] = Texto[intContador];
+				bspd[i] = Texto[intContador];
 			}    
 
 		break;
@@ -539,10 +508,16 @@ void mtdObterVetorCharTextoAlinhadoDinamico(char *Texto, int NumeroCaracteresLin
 
 		break;
 	}
+
+	Retorno = bspd;
+
+	return Retorno;
 }
 
-void mtdObterVetorCharTexto(char *Texto, int NumeroCaracteresLinha, char Alinhamento, char Direcao, int Passo, char *Retorno) 
+char *mtdObterVetorCharTexto(char *Texto, int NumeroCaracteresLinha, char Alinhamento, char Direcao, int Passo) 
 {
+	char *Retorno;
+
 	int intNumeroCaracteresTexto = 0;
 	intNumeroCaracteresTexto = mtdObterComprimentoVetorChar(Texto);
 
@@ -551,12 +526,16 @@ void mtdObterVetorCharTexto(char *Texto, int NumeroCaracteresLinha, char Alinham
 
 	if(intNumeroCaracteresTexto <= NumeroCaracteresLinha)
 	{
-		mtdObterVetorCharTextoAlinhadoEstatico(Texto, NumeroCaracteresLinha, Alinhamento, Retorno);
+		Retorno = mtdObterVetorCharTextoAlinhadoEstatico(Texto, NumeroCaracteresLinha, Alinhamento);
 	}
 	else
 	{
-		mtdObterVetorCharTextoAlinhadoDinamico(Texto, NumeroCaracteresLinha, Direcao, Passo, Retorno);
+		Retorno = mtdObterVetorCharTextoAlinhadoDinamico(Texto, NumeroCaracteresLinha, Direcao, Passo);
 	}
+
+	Retorno = bspd;
+
+	return Retorno;
 }
 
 void mtdTextoAcrescentarCaractere(char *Texto, char Caractere, int NumeroCaracteresLinha, char *Retorno)
@@ -611,10 +590,10 @@ void mtdImprimirSaidaLCDNokia5110(char *Texto, char Alinhamento, char Direcao, i
 	while(Repeticoes > -1 ? intContador++ < Repeticoes : 1)
 	{
 		myLCD.setCursor(5, 5);
-		mtdObterVetorCharTexto(bspl[0], NUMERO_CARACTERES_DISPLAY, Alinhamento, Direcao, contador, Saida);
+		Saida = mtdObterVetorCharTexto(bspl[0], NUMERO_CARACTERES_DISPLAY, Alinhamento, Direcao, contador);
 		myLCD.print(Saida);
 		std::cout << Saida << std::endl;
-		contador = contador < INT_MAX ? contador + 1 : 0;
+		contador++;
 		myLCD.LCDdisplayUpdate();
 		bcm2835_delay(Intervalo * 1000);
 	}
@@ -623,7 +602,7 @@ void mtdImprimirSaidaLCDNokia5110(char *Texto, char Alinhamento, char Direcao, i
 void mtdImprimirSaidaLCDNokia5110(char *Linha01, char *Linha02, char *Linha03, char *Linha04, char *Linha05, char Alinhamento, char Direcao, int Repeticoes, double Intervalo)
 {
 	char bspl[5][TAMANHO_STRING_CHAR];
-	char Saida[5][TAMANHO_STRING_CHAR];
+	char *Saida[5];
 
 	int intContador = 0;
 
@@ -656,12 +635,12 @@ void mtdImprimirSaidaLCDNokia5110(char *Linha01, char *Linha02, char *Linha03, c
 
 		for (int i = 0; i < 5; i++)
 		{
-			mtdObterVetorCharTexto(bspl[i], NUMERO_COLUNAS_DISPLAY_LINHA, Alinhamento, Direcao, contador, Saida[i]);
+			Saida[i] = mtdObterVetorCharTexto(bspl[i], NUMERO_COLUNAS_DISPLAY_LINHA, Alinhamento, Direcao, contador);
 			myLCD.println(Saida[i]);
-			std::cout << "LINHA " << i << ": " << Saida[i] << std::endl;
+			std::cout << "LINHA 05: " << Saida[i] << std::endl;
 		}
 
-		contador = contador < INT_MAX ? contador + 1 : 0;
+		contador++;
 		myLCD.LCDdisplayUpdate();
 		bcm2835_delay(Intervalo * 1000);
 	}
@@ -683,47 +662,5 @@ void mtdImprimirTempoLCDNokia5110(int Repeticoes, double Intervalo)
 		snprintf(bspl[1], TAMANHO_STRING_CHAR, "%02d:%02d:%02d", dt->tm_hour, dt->tm_min, dt->tm_sec);
 
 		mtdImprimirSaidaLCDNokia5110(" ", bspl[0], " ", bspl[1], " ", 'c', 'a', 1, Intervalo);
-	}
-}
-
-void mtdImprimirNomeIPHWNetmaskBroadcastInterfaceLCDNokia5110(int Repeticoes, double Intervalo)
-{
-	char bspl[5][TAMANHO_STRING_CHAR];
-
-	int intContador = 0;
-	int intNumeroInterface = 0;
-
-	while(Repeticoes > -1 ? intContador++ < Repeticoes : 1)
-	{
-		mtdGerarVetorEstruturaInformacoesInterfaceRede();
-		intNumeroInterface = getNumeroInterface();
-
-		if(intNumeroInterface > 0)
-		{
-			for(int i = 0; i < intNumeroInterface + 1; i++)
-			{
-				if(i < (intNumeroInterface))
-				{
-					mtdGerarVetorEstruturaInformacoesInterfaceRede();
-					intNumeroInterface = getNumeroInterface();
-
-					snprintf(bspl[0], TAMANHO_STRING_CHAR, "%s", mtdObterNomeInterface(i));
-					snprintf(bspl[1], TAMANHO_STRING_CHAR, "%s", mtdObterEnderecoIPInterface(i));
-					snprintf(bspl[2], TAMANHO_STRING_CHAR, "%s", mtdObterEnderecoHWInterface(i));
-					snprintf(bspl[3], TAMANHO_STRING_CHAR, "%s", mtdObterNetmaskInterface(i));
-					snprintf(bspl[4], TAMANHO_STRING_CHAR, "%s", mtdObterBroadcastInterface(i));
-
-					mtdImprimirSaidaLCDNokia5110(bspl[0], bspl[1], bspl[2], bspl[3], bspl[4], 'c', 'a', 10, Intervalo);
-				}
-				else
-				{
-					mtdImprimirTempoLCDNokia5110(100, .1);
-				}
-			}
-		}
-		else
-		{
-			mtdImprimirTempoLCDNokia5110(1, .1);
-		}
 	}
 }

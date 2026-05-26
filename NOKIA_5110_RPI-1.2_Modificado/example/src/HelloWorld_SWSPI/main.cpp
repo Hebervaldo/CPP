@@ -1,7 +1,7 @@
 /*
  * Project Name:  PCD8544 Nokia 5110 SPI LCD display Library RPI
  * File: main.cpp
- * Description: library test file , "Hello world" ,basic use case, HW SPI 
+ * Description: library test file , "Hello world" ,basic use case, Software SPI 
  * Author: Gavin Lyons.
  * Description: See URL for full details.
  * URL: https://github.com/gavinlyonsrepo/NOKIA_5110_RPI
@@ -12,18 +12,18 @@
 #include <iostream> // for std::cout
 #include "NOKIA_5110_RPI.hpp" // PCD8544 controller driver
 
-// **************** GLOBALS ***************
+// **************** GPIO ***************
 #define RST_LCD 25
 #define DC_LCD 24
+#define SCLK_LCD 11 // 22
+#define SDIN_LCD 10 // 27
+#define CS_LCD 8
 
 #define inverse  false // set to true to invert display pixel color
 #define contrast 0xBF // default is 0xBF set in LCDinit, Try 0xB1 <-> 0xBF if your display is too dark/dim
 #define bias 0x13 // LCD bias mode 1:48: Try 0x12 or 0x13 or 0x14
 
-const uint32_t SPICLK_FREQ = 64; // Spi clock divider see bcm2835SPIClockDivider enum bcm2835
-const uint8_t SPI_CE_PIN = 0; // which HW SPI chip enable pin to use,  0 or 1
-
-NOKIA_5110_RPI myLCD(RST_LCD, DC_LCD);
+NOKIA_5110_RPI myLCD(RST_LCD, DC_LCD, CS_LCD, SDIN_LCD, SCLK_LCD);
 
 // ************ Function Headers ********
 void Setup(void);
@@ -56,7 +56,7 @@ void Setup(void)
 {
 	bcm2835_delay(250);
 	std::cout << "LCD Start\r\n" ;
-	myLCD.LCDBegin(inverse, contrast, bias, SPICLK_FREQ, SPI_CE_PIN);
+	myLCD.LCDBegin(inverse, contrast, bias);
 	bcm2835_delay(250);
 	myLCD.LCDdisplayClear();
 }
@@ -64,7 +64,6 @@ void Setup(void)
 
 void EndTests(void)
 {
-	myLCD.LCDSPIoff(); //Stop the hardware SPI
 	myLCD.LCDPowerDown(); // Power down device
 	bcm2835_close(); // Close the bcm2835 library
 	std::cout << "LCD End\r\n";
@@ -72,13 +71,12 @@ void EndTests(void)
 
 void Test(void)
 {
-	char testStr[]= "Hello World";
+	char testStr[]= "Hello SWSPI";
 	
 	myLCD.SetFontNum(LCDFontType_Default);
 	myLCD.setTextSize(1);
-	myLCD.setCursor(0, 0);
+	myLCD.setCursor(5, 5);
 	myLCD.print(testStr);
 	myLCD.LCDdisplayUpdate();
 	bcm2835_delay(5000);
-
 }

@@ -61,6 +61,7 @@ install:
 	@echo
 	@echo "[INSTALL HEADERS]"
 	@if ( test ! -d $(PREFIX)/include ) ; then mkdir -p $(PREFIX)/include ; fi
+	@cp -vf  include/getipv4.hpp $(PREFIX)/include
 	@cp -vf  include/NOKIA_5110_RPI.hpp $(PREFIX)/include
 	@cp -vf  include/NOKIA_5110_graphics.hpp $(PREFIX)/include
 	@cp -vf  include/NOKIA_5110_Print.hpp $(PREFIX)/include
@@ -74,6 +75,7 @@ uninstall:
 	@rm -vf ${LIBDIR}/${LIB}.*
 
 	@echo "[UNINSTALL HEADERS]"
+	@rm -rvf  $(PREFIX)/include/getipv4.hpp
 	@rm -rvf  $(PREFIX)/include/NOKIA_5110_RPI.hpp
 	@rm -rvf  $(PREFIX)/include/NOKIA_5110_graphics.hpp
 	@rm -rvf  $(PREFIX)/include/NOKIA_5110_Print.hpp
