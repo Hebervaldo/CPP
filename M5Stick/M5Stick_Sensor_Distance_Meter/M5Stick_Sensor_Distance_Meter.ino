@@ -103,9 +103,7 @@ void loop() {
     M5.Lcd.print("Shutting down");
     M5.Lcd.setTextColor(YELLOW);    
     M5.Lcd.print("");    
-    M5.Lcd.print("Use Power 
-switch to
-turn it ON.");    
+    M5.Lcd.print("Use Power switch to turn it ON.");    
     delay(3000);     
     M5.shutdown();
   }  
@@ -123,7 +121,11 @@ turn it ON.");
     M5.Lcd.print(distance);
     M5.Lcd.print(unit[type-1]);
   }
-    
+  
+
+
+
+  
   delay(500);
   //printOnSerial();
 }
